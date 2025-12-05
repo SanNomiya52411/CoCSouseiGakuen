@@ -40,8 +40,9 @@
             opacity: 0;
             transition: opacity 0.2s;
             z-index: 50;
+            /* 修正: はみ出し防止のため折り返しと最大幅を設定 */
             white-space: normal;
-            max-width: 250px;
+            max-width: 200px;
             border: 1px solid rgba(255,255,255,0.2);
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             line-height: 1.4;
@@ -75,7 +76,7 @@
                 <p class="text-slate-500 text-sm mt-1">蒼星学園 正門（北） 〜 蒼星学園前駅（南）</p>
             </div>
             <div class="mt-2 md:mt-0 text-right">
-                <span class="text-xs bg-slate-200 px-2 py-1 rounded text-slate-600">Map Ver.3.0</span>
+                <span class="text-xs bg-slate-200 px-2 py-1 rounded text-slate-600">Map Ver.3.1</span>
             </div>
         </header>
 
@@ -420,12 +421,22 @@
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
                     
-                    // Boundary check
+                    // 修正: スマホ表示時のはみ出し防止ロジック
+                    const tooltipWidth = tooltip.offsetWidth || 200; // 推定幅
+                    const tooltipHeight = tooltip.offsetHeight || 80; // 推定高さ
+                    
                     let left = x + 15;
                     let top = y + 15;
-                    
-                    if (left + 250 > rect.width) left = x - 265;
-                    if (top + 100 > rect.height) top = y - 110;
+
+                    // 右端チェック
+                    if (left + tooltipWidth > rect.width - 10) {
+                        left = x - tooltipWidth - 15;
+                    }
+
+                    // 下端チェック
+                    if (top + tooltipHeight > rect.height - 10) {
+                        top = y - tooltipHeight - 15;
+                    }
 
                     tooltip.style.left = left + 'px';
                     tooltip.style.top = top + 'px';
