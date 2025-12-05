@@ -51,18 +51,21 @@
         /* Tooltip */
         .tooltip {
             position: absolute;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.95);
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s;
             z-index: 50;
-            white-space: nowrap;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255,255,255,0.1);
+            /* 修正: はみ出し防止のため折り返しと最大幅を設定 */
+            white-space: normal;
+            max-width: 200px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            line-height: 1.4;
         }
 
         /* Animations */
@@ -254,7 +257,7 @@
                     const desc = building.getAttribute('data-desc');
 
                     // Update Tooltip
-                    tooltip.textContent = name;
+                    tooltip.innerHTML = `<strong>${name}</strong><br>${desc}`;
                     tooltip.style.opacity = '1';
 
                     // Update Side Panel
@@ -265,14 +268,29 @@
                 });
 
                 building.addEventListener('mousemove', (e) => {
-                    // SVG coordinate logic for tooltip positioning
-                    // Simple logic for relative mouse position within container
                     const rect = mapContainer.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
                     
-                    tooltip.style.left = (x + 15) + 'px';
-                    tooltip.style.top = (y + 15) + 'px';
+                    // 修正: スマホ表示時のはみ出し防止ロジック
+                    const tooltipWidth = tooltip.offsetWidth || 200; // 推定幅
+                    const tooltipHeight = tooltip.offsetHeight || 80;
+                    
+                    let left = x + 15;
+                    let top = y + 15;
+
+                    // 右端チェック: ツールチップがコンテナ幅を超える場合、左側に表示
+                    if (left + tooltipWidth > rect.width - 10) {
+                        left = x - tooltipWidth - 15;
+                    }
+
+                    // 下端チェック: ツールチップがコンテナ高さを超える場合、上側に表示
+                    if (top + tooltipHeight > rect.height - 10) {
+                        top = y - tooltipHeight - 15;
+                    }
+                    
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
                 });
 
                 building.addEventListener('mouseleave', () => {
