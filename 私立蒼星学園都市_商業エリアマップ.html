@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蒼星学園都市 商業エリアMAP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: #f8fafc; }
+        .font-serif { font-family: 'Noto Serif JP', serif; }
+        
+        .map-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%; /* 1:1 Aspect Ratio */
+            background-color: #e5e7eb;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .map-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.95);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 50;
+            white-space: normal;
+            max-width: 250px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            line-height: 1.4;
+        }
+
+        .facility {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .facility:hover {
+            filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.8));
+            transform: scale(1.02);
+        }
+        
+        /* Area Colors */
+        .area-residential { fill: #f1f5f9; }
+        .area-commercial { fill: #e0e7ff; }
+        .area-station-zone { fill: #e2e8f0; }
+        .area-school-zone { fill: #ecfdf5; }
+        .area-park { fill: #dcfce7; }
+        .road { fill: #cbd5e1; stroke: #94a3b8; stroke-width: 1; }
+        .rail { stroke: #475569; stroke-width: 4; stroke-dasharray: 8,4; }
+    </style>
+</head>
+<body class="p-4 md:p-8 text-slate-800">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-6 flex flex-col md:flex-row justify-between items-end border-b pb-4 border-slate-300">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-serif font-bold text-slate-900">学園都市 商業エリア詳細図</h1>
+                <p class="text-slate-500 text-sm mt-1">蒼星学園 正門（北） 〜 蒼星学園前駅（南）</p>
+            </div>
+            <div class="mt-2 md:mt-0 text-right">
+                <span class="text-xs bg-slate-200 px-2 py-1 rounded text-slate-600">Map Ver.3.0</span>
+            </div>
+        </header>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+            <!-- Map Panel -->
+            <div class="lg:col-span-2">
+                <div class="map-container" id="mapContainer">
+                    <svg class="map-content" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Background -->
+                        <rect width="800" height="800" fill="#f8fafc" />
+
+                        <!-- Zoning -->
+                        <rect x="0" y="0" width="800" height="150" class="area-school-zone" opacity="0.5" /> <!-- School Side (North) -->
+                        <rect x="0" y="150" width="800" height="450" class="area-residential" opacity="0.5" /> <!-- Middle -->
+                        <rect x="0" y="600" width="800" height="200" class="area-station-zone" opacity="0.3" /> <!-- Station Side (South) -->
+
+                        <!-- Roads -->
+                        <rect x="360" y="0" width="80" height="800" fill="#cbd5e1" /> <!-- Main Avenue -->
+                        <rect x="0" y="120" width="800" height="30" fill="#cbd5e1" /> <!-- Gate Front St. -->
+                        <rect x="0" y="400" width="800" height="30" fill="#cbd5e1" /> <!-- Hospital St. -->
+                        <rect x="0" y="650" width="800" height="40" fill="#cbd5e1" /> <!-- Station Front St. -->
+
+                        <!-- Railroad -->
+                        <line x1="0" y1="750" x2="800" y2="750" class="rail" />
+                        <rect x="0" y="740" width="800" height="20" fill="none" stroke="#94a3b8" stroke-width="1" opacity="0.5"/>
+
+                        <!-- FACILITIES -->
+
+                        <!-- 8. School Area (North) -->
+                        <g class="facility" data-name="蒼星学園 正門" data-desc="ここから先は学園敷地内。守衛所あり。">
+                            <rect x="300" y="40" width="200" height="10" fill="#334155" />
+                            <rect x="300" y="30" width="20" height="30" fill="#475569" />
+                            <rect x="480" y="30" width="20" height="30" fill="#475569" />
+                            <text x="400" y="20" font-size="14" fill="#1e293b" text-anchor="middle" font-weight="bold">私立蒼星学園</text>
+                            <path d="M400,100 L400,60 L390,70 M400,60 L410,70" stroke="#334155" stroke-width="2" fill="none" />
+                        </g>
+
+                        <!-- NEW: Convenience Store (North/School) -->
+                        <g class="facility" data-name="コンビニ「スターマート」" data-desc="学園正門のすぐそばにあるコンビニ。朝昼夕は生徒で溢れかえる。">
+                            <rect x="250" y="80" width="40" height="30" fill="#f97316" rx="2" />
+                            <text x="270" y="100" font-size="8" fill="white" text-anchor="middle">CVS</text>
+                        </g>
+
+                        <!-- 7. Outdoor Stage (North Area) -->
+                        <g class="facility" data-name="劇場前 野外ステージ" data-desc="市民劇場前にある広場。学園祭の一般公開日にはミスター＆ミスコンテストが開催される。">
+                            <circle cx="600" cy="250" r="60" fill="#fcd34d" opacity="0.3" />
+                            <path d="M560,250 Q600,210 640,250" stroke="#b45309" stroke-width="4" fill="none" />
+                            <rect x="580" y="260" width="40" height="20" fill="#b45309" />
+                            <text x="600" y="300" font-size="10" fill="#78350f" text-anchor="middle">野外ステージ</text>
+                            <text x="600" y="220" font-size="10" fill="#78350f" text-anchor="middle" font-weight="bold">市民劇場</text>
+                        </g>
+
+                        <!-- NEW: Park (Middle/West) -->
+                        <g class="facility" data-name="流星公園" data-desc="住宅街にある小さな公園。ブランコと滑り台がある。">
+                            <circle cx="100" cy="300" r="40" class="area-park" />
+                            <text x="100" y="305" font-size="10" fill="#166534" text-anchor="middle">公園</text>
+                        </g>
+
+                        <!-- 6. Hospital (Middle Area) -->
+                        <g class="facility" data-name="蒼星総合病院" data-desc="都市内唯一かつ最大の病院。広い駐車場と入院設備を完備。">
+                            <path d="M100,350 L250,350 L250,450 L100,450 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
+                            <rect x="165" y="370" width="20" height="60" fill="#ef4444" />
+                            <rect x="145" y="390" width="60" height="20" fill="#ef4444" />
+                            <text x="175" y="470" font-size="12" fill="#334155" text-anchor="middle" font-weight="bold">総合病院</text>
+                        </g>
+
+                        <!-- NEW: Drugstore (Near Hospital) -->
+                        <g class="facility" data-name="ドラッグストア「アオイ」" data-desc="病院のすぐ近くにある。日用品やお菓子も安い。">
+                            <rect x="260" y="410" width="60" height="30" fill="#3b82f6" rx="2" />
+                            <text x="290" y="430" font-size="8" fill="white" text-anchor="middle">薬局</text>
+                        </g>
+
+                        <!-- 2. Police Box (Central) -->
+                        <g class="facility" data-name="中央交番" data-desc="都市の中央に位置する。学内の落とし物は学校に届く。">
+                            <rect x="450" y="380" width="40" height="40" fill="#ef4444" rx="2" />
+                            <circle cx="470" cy="390" r="4" fill="white" opacity="0.8" />
+                            <text x="470" y="410" font-size="10" fill="white" text-anchor="middle" font-weight="bold">交番</text>
+                        </g>
+
+                        <!-- NEW: Post Office (Central) -->
+                        <g class="facility" data-name="蒼星郵便局" data-desc="本局。ATMもある。">
+                            <rect x="450" y="440" width="40" height="30" fill="#ef4444" rx="2" />
+                            <text x="470" y="460" font-size="14" fill="white" text-anchor="middle" font-weight="bold">〒</text>
+                        </g>
+
+                        <!-- NEW: Supermarket (Middle/West) -->
+                        <g class="facility" data-name="スーパー「フレッシュ」" data-desc="24時間営業のスーパー。寮生や教職員の生活の要。">
+                            <rect x="50" y="500" width="80" height="60" fill="#10b981" rx="2" />
+                            <text x="90" y="535" font-size="10" fill="white" text-anchor="middle">スーパー</text>
+                        </g>
+
+                        <!-- 4. Bookstore (Middle Area) -->
+                        <g class="facility" data-name="銀河書房" data-desc="昔ながらの雰囲気の本屋。幅広いジャンルを扱う。">
+                            <rect x="150" y="500" width="100" height="80" fill="#1e40af" rx="2" />
+                            <text x="200" y="545" font-size="12" fill="white" text-anchor="middle">本屋</text>
+                        </g>
+
+                        <!-- 5. Home Center (Middle Area) -->
+                        <g class="facility" data-name="ホームセンター「DIYコメット」" data-desc="敷地が広く、駐車場がほぼ無いため品揃えが非常に良い。">
+                            <rect x="550" y="500" width="120" height="80" fill="#15803d" rx="2" />
+                            <text x="610" y="545" font-size="12" fill="white" text-anchor="middle">ホームセンター</text>
+                        </g>
+
+                        <!-- 5.5 Bakery (Middle Area) -->
+                        <g class="facility" data-name="ベーカリー「三日月」" data-desc="焼き立てパンの香りが漂う人気店。">
+                            <rect x="280" y="550" width="50" height="40" fill="#d97706" rx="2" />
+                            <text x="305" y="575" font-size="10" fill="white" text-anchor="middle">パン屋</text>
+                            <path d="M280,550 L330,550 L305,535 Z" fill="#fbbf24" />
+                        </g>
+
+                        <!-- NEW: Family Restaurant (East side) -->
+                        <g class="facility" data-name="ファミレス「デリシャス」" data-desc="ドリンクバー完備。テスト勉強をする生徒も多い。">
+                            <rect x="460" y="550" width="70" height="50" fill="#ec4899" rx="2" />
+                            <text x="495" y="580" font-size="10" fill="white" text-anchor="middle">ファミレス</text>
+                        </g>
+
+                        <!-- NEW: Bank (South/Station) -->
+                        <g class="facility" data-name="都市銀行 蒼星支店" data-desc="駅前大通り沿いにある銀行。">
+                            <rect x="300" y="610" width="50" height="30" fill="#64748b" rx="1" />
+                            <text x="325" y="630" font-size="8" fill="white" text-anchor="middle">銀行</text>
+                        </g>
+
+                        <!-- NEW: Fast Food (South/Station) -->
+                        <g class="facility" data-name="バーガーショップ" data-desc="駅前の待ち合わせ定番スポット。">
+                            <rect x="450" y="610" width="50" height="30" fill="#ef4444" rx="1" />
+                            <text x="475" y="630" font-size="8" fill="white" text-anchor="middle">バーガー</text>
+                        </g>
+
+                        <!-- 1. Station (South) -->
+                        <g class="facility" data-name="蒼星学園前駅" data-desc="他県へ向かう電車が停まる最寄り駅。普通電車しか止まらず、次駅まで20分かかる。">
+                            <rect x="300" y="720" width="200" height="60" fill="#f8fafc" stroke="#475569" stroke-width="2" />
+                            <rect x="320" y="730" width="160" height="40" fill="#cbd5e1" />
+                            <text x="400" y="755" font-size="14" fill="#1e293b" text-anchor="middle" font-weight="bold">蒼星学園前駅</text>
+                            <!-- Bus Terminal -->
+                            <path d="M300,650 L500,650 L500,720 L300,720 Z" fill="#e2e8f0" />
+                            <text x="400" y="690" font-size="10" fill="#64748b" text-anchor="middle">バスターミナル</text>
+                        </g>
+
+                        <!-- 3. Cafe (South/Station Area) -->
+                        <g class="facility" data-name="エキチカカフェ「Starlight」" data-desc="駅近くにあるカフェ。電車までの待ち時間や放課後の利用が多い。">
+                            <rect x="550" y="660" width="60" height="40" fill="#b45309" rx="4" />
+                            <text x="580" y="685" font-size="10" fill="white" text-anchor="middle">カフェ</text>
+                            <path d="M550,660 L610,660 L600,650 L560,650 Z" fill="#d97706" />
+                        </g>
+
+                        <!-- 100 Yen Shop (South Area) -->
+                        <g class="facility" data-name="100円ショップ「セン・エン」" data-desc="駅前にある小型店舗。文具や小物が揃う。">
+                            <rect x="220" y="660" width="60" height="40" fill="#ec4899" rx="2" />
+                            <text x="250" y="685" font-size="10" fill="white" text-anchor="middle">100均</text>
+                        </g>
+
+                        <!-- NEW: Game Center (South/Station) -->
+                        <g class="facility" data-name="ゲーセン「サイバーゾーン」" data-desc="最新機種が揃う。プリクラコーナーが広い。">
+                            <rect x="650" y="650" width="60" height="50" fill="#8b5cf6" rx="2" />
+                            <text x="680" y="680" font-size="10" fill="white" text-anchor="middle">ゲーセン</text>
+                        </g>
+
+                        <!-- NEW: Karaoke (South/Station) -->
+                        <g class="facility" data-name="カラオケ「歌広場メテオ」" data-desc="駅の東側にある。学割料金が安い。">
+                            <rect x="720" y="650" width="50" height="50" fill="#f43f5e" rx="2" />
+                            <text x="745" y="680" font-size="8" fill="white" text-anchor="middle">カラオケ</text>
+                        </g>
+
+                        <!-- Labels for areas -->
+                        <text x="50" y="30" font-size="10" fill="#64748b">↑ 北 (学園側)</text>
+                        <text x="50" y="780" font-size="10" fill="#64748b">↓ 南 (駅・県外方面)</text>
+
+                    </svg>
+                    
+                    <div id="cityTooltip" class="tooltip"></div>
+                </div>
+            </div>
+
+            <!-- List Panel -->
+            <div class="lg:col-span-1">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 h-full">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 border-b-2 border-blue-100 pb-2">施設一覧</h2>
+                    
+                    <div class="space-y-4 overflow-y-auto max-h-[600px] pr-2">
+                        <!-- School Side (North) -->
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">学園・劇場エリア（北）</h3>
+                            <ul class="space-y-2">
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('蒼星学園 正門')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-slate-800"></span>
+                                        <span class="font-bold text-sm text-slate-700">私立蒼星学園</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">ここから先は学園敷地。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('劇場前 野外ステージ')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+                                        <span class="font-bold text-sm text-slate-700">劇場前 野外ステージ</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">ミスコン会場となる広場。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('コンビニ「スターマート」')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                                        <span class="font-bold text-sm text-slate-700">コンビニ</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">正門すぐ。非常に便利。</p>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Central Area -->
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">商業・中央エリア</h3>
+                            <ul class="space-y-2">
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('中央交番')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                        <span class="font-bold text-sm text-slate-700">中央交番</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">治安の要。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('蒼星総合病院')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                                        <span class="font-bold text-sm text-slate-700">蒼星総合病院</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">エリア最大の医療機関。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('ドラッグストア「アオイ」')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                        <span class="font-bold text-sm text-slate-700">ドラッグストア</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">日用品も安い。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('銀河書房')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-blue-700"></span>
+                                        <span class="font-bold text-sm text-slate-700">銀河書房</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">昔ながらの本屋さん。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('ホームセンター「DIYコメット」')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-green-600"></span>
+                                        <span class="font-bold text-sm text-slate-700">ホームセンター</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">品揃えが良い。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('ベーカリー「三日月」')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-yellow-600"></span>
+                                        <span class="font-bold text-sm text-slate-700">ベーカリー「三日月」</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">焼きたてパンが人気。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('スーパー「フレッシュ」')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                        <span class="font-bold text-sm text-slate-700">スーパー</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">24時間営業。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('蒼星郵便局')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                        <span class="font-bold text-sm text-slate-700">郵便局</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">ATMあり。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('ファミレス「デリシャス」')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-pink-500"></span>
+                                        <span class="font-bold text-sm text-slate-700">ファミレス</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">ドリンクバー完備。</p>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- South Area -->
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">駅周辺エリア（南）</h3>
+                            <ul class="space-y-2">
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer group" onmouseenter="highlightMap('蒼星学園前駅')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                                        <span class="font-bold text-sm text-slate-700">蒼星学園前駅</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">最寄り駅。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('エキチカカフェ「Starlight」')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-yellow-600"></span>
+                                        <span class="font-bold text-sm text-slate-700">カフェ Starlight</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">駅利用者の憩いの場。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('100円ショップ「セン・エン」')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-pink-500"></span>
+                                        <span class="font-bold text-sm text-slate-700">100円ショップ</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">文具や小物が揃う。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('ゲーセン「サイバーゾーン」')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-violet-500"></span>
+                                        <span class="font-bold text-sm text-slate-700">ゲームセンター</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">プリクラコーナーあり。</p>
+                                </li>
+                                <li class="p-3 rounded bg-slate-50 border border-slate-100 hover:border-blue-300 transition-colors cursor-pointer" onmouseenter="highlightMap('カラオケ「歌広場メテオ」')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                        <span class="font-bold text-sm text-slate-700">カラオケ</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">学割あり。</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const facilities = document.querySelectorAll('.facility');
+            const tooltip = document.getElementById('cityTooltip');
+            const mapContainer = document.getElementById('mapContainer');
+
+            facilities.forEach(facility => {
+                facility.addEventListener('mouseenter', (e) => {
+                    const name = facility.getAttribute('data-name');
+                    const desc = facility.getAttribute('data-desc');
+
+                    tooltip.innerHTML = `<strong>${name}</strong><br>${desc}`;
+                    tooltip.style.opacity = '1';
+                });
+
+                facility.addEventListener('mousemove', (e) => {
+                    const rect = mapContainer.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // Boundary check
+                    let left = x + 15;
+                    let top = y + 15;
+                    
+                    if (left + 250 > rect.width) left = x - 265;
+                    if (top + 100 > rect.height) top = y - 110;
+
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                });
+
+                facility.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = '0';
+                });
+            });
+        });
+
+        // Simple highlight function
+        function highlightMap(name) {
+            const el = document.querySelector(`g[data-name="${name}"]`);
+            if(el) {
+                // Visual cue logic could go here
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私立蒼星学園都市 MAP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: #f0f4f8; }
+        .font-serif { font-family: 'Noto Serif JP', serif; }
+        
+        /* Map Styles */
+        .map-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 75%; /* 4:3 Aspect Ratio */
+            background-color: #e2e8f0;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .map-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Areas */
+        .area-mountain { fill: #334155; }
+        .area-ground { fill: #f1f5f9; }
+        .area-road { fill: #cbd5e1; stroke: #94a3b8; stroke-width: 2; }
+        .area-water { fill: #bae6fd; }
+        .area-forest { fill: #dcfce7; }
+        .area-city { fill: #f8fafc; }
+
+        /* Buildings */
+        .building {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
+        }
+        .building:hover {
+            filter: drop-shadow(0px 0px 8px rgba(59, 130, 246, 0.6));
+            transform: translateY(-2px);
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 50;
+            white-space: nowrap;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Animations */
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 3s infinite;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 bg-slate-100 text-slate-800">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 text-center">
+            <div class="inline-flex items-center gap-2 mb-2">
+                <span class="text-blue-600">★</span>
+                <span class="font-bold text-slate-500 tracking-widest text-sm">PRIVATE SOUSEI ACADEMY</span>
+                <span class="text-blue-600">★</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-serif font-bold text-slate-900">学園都市 広域案内図</h1>
+            <p class="text-slate-600 mt-2">施設配置および周辺エリアガイド</p>
+        </header>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- MAP Area -->
+            <div class="lg:col-span-2">
+                <div class="map-container" id="mapContainer">
+                    <svg class="map-content" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Background / Basin Terrain -->
+                        <rect width="800" height="600" fill="#ecfdf5" />
+                        
+                        <!-- Mountains (North & Surroundings) -->
+                        <path d="M0,0 L800,0 L800,150 Q600,200 400,120 Q200,200 0,150 Z" class="area-mountain" />
+                        <path d="M0,150 L0,600 L100,600 Q150,400 50,200 Z" class="area-mountain" opacity="0.8" />
+                        <path d="M800,150 L800,600 L700,600 Q650,400 750,200 Z" class="area-mountain" opacity="0.8" />
+
+                        <!-- City Zone (South) -->
+                        <path d="M100,600 L700,600 L700,450 Q400,400 100,450 Z" fill="#e2e8f0" />
+                        
+                        <!-- Roads -->
+                        <!-- Main Approach -->
+                        <path d="M400,600 L400,500" stroke="#cbd5e1" stroke-width="20" fill="none" />
+                        <!-- Loop Road -->
+                        <ellipse cx="400" cy="350" rx="250" ry="150" stroke="#cbd5e1" stroke-width="12" fill="none" />
+                        <!-- Internal Paths -->
+                        <line x1="400" y1="500" x2="400" y2="400" stroke="#cbd5e1" stroke-width="8" />
+                        <line x1="250" y1="350" x2="550" y2="350" stroke="#cbd5e1" stroke-width="6" />
+
+                        <!-- Forest / Garden Areas -->
+                        <circle cx="400" cy="350" r="180" class="area-ground" />
+                        <path d="M350,250 Q400,220 450,250 L450,300 L350,300 Z" class="area-forest" opacity="0.5" /> <!-- Behind Main Building -->
+
+                        <!-- === BUILDINGS === -->
+
+                        <!-- Main School Building (本校舎) -->
+                        <g class="building" data-name="本校舎" data-desc="全学年の教室、職員室、学園長室がある中心施設。">
+                            <rect x="320" y="280" width="160" height="60" fill="#1e293b" rx="2" />
+                            <rect x="380" y="260" width="40" height="20" fill="#1e293b" /> <!-- Clock Tower base -->
+                            <circle cx="400" cy="270" r="8" fill="#fbbf24" /> <!-- Clock -->
+                            <text x="400" y="315" font-size="12" fill="white" text-anchor="middle" font-weight="bold">本校舎</text>
+                        </g>
+
+                        <!-- Old School Building (旧校舎) -->
+                        <g class="building" data-name="旧校舎" data-desc="現在は倉庫や一部の特別教室として使用。北側の森に近い。「開かずの扉」の噂あり。">
+                            <rect x="520" y="220" width="80" height="40" fill="#475569" opacity="0.9" rx="2" />
+                            <text x="560" y="245" font-size="10" fill="#cbd5e1" text-anchor="middle">旧校舎</text>
+                        </g>
+
+                        <!-- Club Building (部室棟) -->
+                        <g class="building" data-name="部室棟" data-desc="文化部・運動部の部室が集まる4階建ての建物。放課後は最も賑やか。">
+                            <rect x="550" y="320" width="60" height="80" fill="#3b82f6" rx="2" />
+                            <text x="580" y="365" font-size="10" fill="white" text-anchor="middle" style="writing-mode: vertical-rl;">部室棟</text>
+                        </g>
+
+                        <!-- Gymnasiums (体育館) -->
+                        <g class="building" data-name="第一体育館 / 第二体育館" data-desc="メインアリーナとサブアリーナ。最新のトレーニングルームも完備。">
+                            <rect x="180" y="300" width="100" height="60" fill="#0f766e" rx="2" />
+                            <text x="230" y="335" font-size="10" fill="white" text-anchor="middle">体育館</text>
+                        </g>
+
+                        <!-- Library (図書館) -->
+                        <g class="building" data-name="中央図書館" data-desc="蔵書数トップクラス。地下書庫には貴重な資料も眠る。">
+                            <rect x="220" y="230" width="70" height="50" fill="#7c3aed" rx="2" />
+                            <text x="255" y="260" font-size="10" fill="white" text-anchor="middle">図書館</text>
+                        </g>
+
+                        <!-- Cafeteria (大食堂) -->
+                        <g class="building" data-name="大食堂 Galaxy" data-desc="最大収容人数1000人。メニューが豊富で安い。">
+                            <circle cx="480" cy="400" r="35" fill="#f97316" />
+                            <text x="480" y="405" font-size="10" fill="white" text-anchor="middle">食堂</text>
+                        </g>
+
+                        <!-- Dormitories (寮) -->
+                        <!-- Men's Dorm -->
+                        <g class="building" data-name="男子寮エリア" data-desc="複数の棟からなる男子生徒用宿舎。大浴場完備。">
+                            <rect x="650" y="350" width="40" height="80" fill="#1d4ed8" rx="4" />
+                            <rect x="700" y="360" width="30" height="60" fill="#1d4ed8" rx="4" />
+                            <text x="685" y="450" font-size="10" fill="#1e293b" text-anchor="middle" font-weight="bold">男子寮</text>
+                        </g>
+                        <!-- Women's Dorm -->
+                        <g class="building" data-name="女子寮エリア" data-desc="セキュリティ万全の女子生徒用宿舎。中庭が美しい。">
+                            <rect x="100" y="350" width="40" height="80" fill="#be185d" rx="4" />
+                            <rect x="60" y="360" width="30" height="60" fill="#be185d" rx="4" />
+                            <text x="100" y="450" font-size="10" fill="#1e293b" text-anchor="middle" font-weight="bold">女子寮</text>
+                        </g>
+
+                        <!-- Pool (プール) -->
+                        <g class="building" data-name="屋外プール" data-desc="夏季のみ利用可能。夜間の立ち入りは禁止されている。">
+                            <rect x="100" y="250" width="60" height="30" fill="#0ea5e9" rx="1" />
+                            <text x="130" y="268" font-size="8" fill="white" text-anchor="middle">プール</text>
+                        </g>
+
+                        <!-- City Area -->
+                        <g class="building" data-name="学園都市エリア" data-desc="コンビニ、スーパー、カラオケ、書店などが揃う商業エリア。">
+                            <path d="M200,500 L600,500 L600,550 L200,550 Z" fill="#cbd5e1" opacity="0.5" />
+                            <rect x="250" y="510" width="30" height="30" fill="#94a3b8" />
+                            <rect x="300" y="510" width="40" height="20" fill="#94a3b8" />
+                            <rect x="450" y="510" width="30" height="30" fill="#94a3b8" />
+                            <rect x="520" y="510" width="30" height="30" fill="#94a3b8" />
+                            <text x="400" y="530" font-size="12" fill="#475569" text-anchor="middle" font-weight="bold">商業・都市エリア</text>
+                        </g>
+
+                        <!-- Main Gate -->
+                        <g class="building" data-name="正門" data-desc="学園の入り口。守衛所があり、関係者以外の立ち入りを厳しく制限している。">
+                            <rect x="380" y="490" width="40" height="10" fill="#334155" />
+                            <text x="425" y="500" font-size="8" fill="#334155" text-anchor="start">正門</text>
+                        </g>
+
+                        <!-- Garden / Backyard -->
+                        <g class="building" data-name="裏庭・農園" data-desc="園芸部が管理する畑や花壇がある。巨大カボチャ栽培中。">
+                            <circle cx="550" cy="180" r="20" fill="#a3e635" opacity="0.8" />
+                            <text x="550" y="185" font-size="8" fill="#1a2e05" text-anchor="middle">農園</text>
+                        </g>
+
+                    </svg>
+                    
+                    <!-- Tooltip Element -->
+                    <div id="tooltip" class="tooltip"></div>
+                </div>
+            </div>
+
+            <!-- Side Info Panel -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        エリアガイド
+                    </h2>
+                    <div id="infoPanel">
+                        <p class="text-slate-500 text-sm">地図上の施設にカーソルを合わせると、詳細情報が表示されます。</p>
+                        <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <h3 class="font-bold text-blue-800 mb-2 text-sm">アクセス情報</h3>
+                            <p class="text-xs text-blue-700 leading-relaxed">
+                                最寄駅「蒼星学園前」よりスクールバスで約15分。<br>
+                                ※一般車両の入構には事前の許可証申請が必要です。<br>
+                                ※徒歩での登下校は推奨されていません（野生動物出没のため）。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-bold text-slate-800 mb-3">凡例</h2>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center"><span class="w-4 h-4 bg-slate-800 rounded mr-2"></span> 主要施設 (校舎等)</li>
+                        <li class="flex items-center"><span class="w-4 h-4 bg-teal-700 rounded mr-2"></span> 運動施設 (体育館)</li>
+                        <li class="flex items-center"><span class="w-4 h-4 bg-blue-500 rounded mr-2"></span> 文化施設・部室</li>
+                        <li class="flex items-center"><span class="w-4 h-4 bg-blue-700 rounded mr-2"></span> 男子寮</li>
+                        <li class="flex items-center"><span class="w-4 h-4 bg-pink-700 rounded mr-2"></span> 女子寮</li>
+                        <li class="flex items-center"><span class="w-4 h-4 bg-slate-400 rounded mr-2"></span> 都市エリア・その他</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buildings = document.querySelectorAll('.building');
+            const tooltip = document.getElementById('tooltip');
+            const infoPanel = document.getElementById('infoPanel');
+            const mapContainer = document.getElementById('mapContainer');
+
+            buildings.forEach(building => {
+                building.addEventListener('mouseenter', (e) => {
+                    const name = building.getAttribute('data-name');
+                    const desc = building.getAttribute('data-desc');
+
+                    // Update Tooltip
+                    tooltip.textContent = name;
+                    tooltip.style.opacity = '1';
+
+                    // Update Side Panel
+                    infoPanel.innerHTML = `
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">${name}</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">${desc}</p>
+                    `;
+                });
+
+                building.addEventListener('mousemove', (e) => {
+                    // SVG coordinate logic for tooltip positioning
+                    // Simple logic for relative mouse position within container
+                    const rect = mapContainer.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    tooltip.style.left = (x + 15) + 'px';
+                    tooltip.style.top = (y + 15) + 'px';
+                });
+
+                building.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = '0';
+                    // Reset Side Panel
+                    infoPanel.innerHTML = `
+                        <p class="text-slate-500 text-sm">地図上の施設にカーソルを合わせると、詳細情報が表示されます。</p>
+                        <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <h3 class="font-bold text-blue-800 mb-2 text-sm">アクセス情報</h3>
+                            <p class="text-xs text-blue-700 leading-relaxed">
+                                最寄駅「蒼星学園前」よりスクールバスで約15分。<br>
+                                ※一般車両の入構には事前の許可証申請が必要です。<br>
+                                ※徒歩での登下校は推奨されていません（野生動物出没のため）。
+                            </p>
+                        </div>
+                    `;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
