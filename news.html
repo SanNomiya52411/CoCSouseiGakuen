@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,28 +12,68 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <!-- Babel (ブラウザでJSXを動かすための変換ツール) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
+
     <!-- Google Fonts (フォント) -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap"
+        rel="stylesheet">
 
     <style>
-        body { font-family: 'Noto Sans JP', sans-serif; }
-        .font-serif { font-family: 'Noto Serif JP', serif; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        .font-serif {
+            font-family: 'Noto Serif JP', serif;
+        }
+
         @keyframes fade-in-up {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .animate-fade-in-up { animation: fade-in-up 0.3s ease-out forwards; }
+
+        .animate-fade-in-up {
+            animation: fade-in-up 0.3s ease-out forwards;
+        }
+
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
         }
-        .animate-shake { animation: shake 0.3s ease-in-out; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .animate-shake {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
+
 <body class="bg-slate-50 text-slate-800">
     <div id="root"></div>
 
@@ -42,10 +83,44 @@
         // =================================================================
         // ★★★ ニュース更新エリア ★★★
         // =================================================================
-        
+
         const NEWS_DATA = [
             {
-                id: 99, 
+                id: 98,
+                date: '20XX.10.01',
+                category: '学食',
+                title: '【学食】10月メニューのお知らせ',
+                summary: '大食堂「ギャラクシー」の10月メニューをお知らせします。今月は「秋の味覚フェア」も同時開催中です。',
+                content: `
+                    <p>大食堂「ギャラクシー」より、10月の基本メニューおよび限定メニューをお知らせします。</p>
+                    
+                    <h4 class="font-bold mt-6 mb-2 text-blue-700 border-b border-blue-200 pb-1">■ 定番メニュー</h4>
+                    <ul class="list-disc list-inside text-slate-700 mb-4 space-y-1">
+                        <li><strong>A定食：</strong> 日替わりハンバーグプレート</li>
+                        <li><strong>B定食：</strong> 若鶏の唐揚げ定食（おろしポン酢）</li>
+                        <li><strong>麺類：</strong> ギャラクシー醤油ラーメン / 盆地野菜たっぷり山菜うどん</li>
+                        <li><strong>ご飯もの：</strong> 蒼星特製カツカレー / スタミナ焼肉丼</li>
+                    </ul>
+                    
+                    <h4 class="font-bold mt-6 mb-2 text-orange-600 border-b border-orange-200 pb-1">■ 10月限定「秋の味覚フェア」</h4>
+                    <p class="text-sm text-slate-600 mb-2">学園周辺の山々で収穫された新鮮な食材をふんだんに使用しています。</p>
+                    <ul class="list-disc list-inside text-slate-700 mb-4 space-y-1">
+                        <li><strong>秋の味覚定食：</strong> 栗ご飯とサンマの塩焼きセット</li>
+                        <li><strong>日替わりパスタ：</strong> 特製キノコクリームパスタ</li>
+                        <li><strong>限定デザート：</strong> さつまいもパフェ（寮生のリクエストにより復活！）</li>
+                    </ul>
+
+                    <h4 class="font-bold mt-6 mb-2 text-purple-700 border-b border-purple-200 pb-1">■ 【学生限定】特別裏メニュー</h4>
+                    <ul class="list-disc list-inside text-slate-700 space-y-1">
+                        <li><strong>メガ盛りマロンパフェ：</strong> 450円（スターコイン利用可）</li>
+                    </ul>
+                    <p class="text-xs text-slate-500 mt-2">※裏メニューの注文には学生証の提示が必要です。通常の3倍サイズのため、食べ残し厳禁です。</p>
+                `,
+                tags: ['学食', 'メニュー', '期間限定'],
+                important: false,
+            },
+            {
+                id: 99,
                 date: '20XX.10.16',
                 category: 'オカルト研',
                 title: '【部員急募】旧校舎「開かずの扉」の謎に迫る！深夜調査隊募集',
@@ -435,24 +510,24 @@
         );
 
         const Icons = {
-            Search: (props) => <Icon {...props} path={<><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></>} />,
-            Calendar: (props) => <Icon {...props} path={<><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></>} />,
-            Tag: (props) => <Icon {...props} path={<><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l5 5a2 2 0 0 0 2.828 0l7.172-7.172a2 2 0 0 0 0-2.828l-5-5z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></>} />,
-            ChevronRight: (props) => <Icon {...props} path={<path d="m9 18 6-6-6-6"/>} />,
-            X: (props) => <Icon {...props} path={<><path d="M18 6 6 18"/><path d="m6 6 12 12"/></>} />,
-            Bell: (props) => <Icon {...props} path={<><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></>} />,
-            Star: (props) => <Icon {...props} path={<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>} />,
-            Filter: (props) => <Icon {...props} path={<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>} />,
-            Lock: (props) => <Icon {...props} path={<><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>} />,
-            User: (props) => <Icon {...props} path={<><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>} />,
-            LogOut: (props) => <Icon {...props} path={<><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></>} />,
-            FileText: (props) => <Icon {...props} path={<><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></>} />,
-            AlertCircle: (props) => <Icon {...props} path={<><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></>} />,
-            Megaphone: (props) => <Icon {...props} path={<><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></>} />,
-            PenTool: (props) => <Icon {...props} path={<><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="m2 2 7.586 7.586"/><circle cx="11" cy="11" r="2"/></>} />,
-            Telescope: (props) => <Icon {...props} path={<><path d="m10.065 12.493-6.18 1.318a.934.934 0 0 1-1.108-.702l-.537-2.536a.934.934 0 0 1 .702-1.108l6.18-1.318a.934.934 0 0 1 1.108.702l.537 2.536a.934.934 0 0 1-.702 1.108Z"/><path d="m13.5 18-6-13"/><path d="m15.26 19.355 5.586 1.862a.934.934 0 0 0 1.173-.588l.816-2.449a.934.934 0 0 0-.588-1.173l-5.586-1.862a.934.934 0 0 0-1.173.588l-.816 2.449a.934.934 0 0 0 .588 1.173Z"/><path d="m12.18 6.18 1.87-1.87a2 2 0 1 1 2.83 2.83l-1.87 1.87"/></>} />,
-            Music: (props) => <Icon {...props} path={<><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></>} />,
-            Book: (props) => <Icon {...props} path={<><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></>} />,
+            Search: (props) => <Icon {...props} path={<><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></>} />,
+            Calendar: (props) => <Icon {...props} path={<><rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" /></>} />,
+            Tag: (props) => <Icon {...props} path={<><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l5 5a2 2 0 0 0 2.828 0l7.172-7.172a2 2 0 0 0 0-2.828l-5-5z" /><circle cx="7.5" cy="7.5" r=".5" fill="currentColor" /></>} />,
+            ChevronRight: (props) => <Icon {...props} path={<path d="m9 18 6-6-6-6" />} />,
+            X: (props) => <Icon {...props} path={<><path d="M18 6 6 18" /><path d="m6 6 12 12" /></>} />,
+            Bell: (props) => <Icon {...props} path={<><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></>} />,
+            Star: (props) => <Icon {...props} path={<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />} />,
+            Filter: (props) => <Icon {...props} path={<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />} />,
+            Lock: (props) => <Icon {...props} path={<><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></>} />,
+            User: (props) => <Icon {...props} path={<><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></>} />,
+            LogOut: (props) => <Icon {...props} path={<><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></>} />,
+            FileText: (props) => <Icon {...props} path={<><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /></>} />,
+            AlertCircle: (props) => <Icon {...props} path={<><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></>} />,
+            Megaphone: (props) => <Icon {...props} path={<><path d="m3 11 18-5v12L3 14v-3z" /><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" /></>} />,
+            PenTool: (props) => <Icon {...props} path={<><path d="m12 19 7-7 3 3-7 7-3-3z" /><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" /><path d="m2 2 7.586 7.586" /><circle cx="11" cy="11" r="2" /></>} />,
+            Telescope: (props) => <Icon {...props} path={<><path d="m10.065 12.493-6.18 1.318a.934.934 0 0 1-1.108-.702l-.537-2.536a.934.934 0 0 1 .702-1.108l6.18-1.318a.934.934 0 0 1 1.108.702l.537 2.536a.934.934 0 0 1-.702 1.108Z" /><path d="m13.5 18-6-13" /><path d="m15.26 19.355 5.586 1.862a.934.934 0 0 0 1.173-.588l.816-2.449a.934.934 0 0 0-.588-1.173l-5.586-1.862a.934.934 0 0 0-1.173.588l-.816 2.449a.934.934 0 0 0 .588 1.173Z" /><path d="m12.18 6.18 1.87-1.87a2 2 0 1 1 2.83 2.83l-1.87 1.87" /></>} />,
+            Music: (props) => <Icon {...props} path={<><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></>} />,
+            Book: (props) => <Icon {...props} path={<><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>} />,
         };
 
         // --- メインコンポーネント ---
@@ -461,10 +536,10 @@
             const [isLoading, setIsLoading] = useState(false); // Loading state
             const [loginInput, setLoginInput] = useState('');
             const [loginError, setLoginError] = useState('');
-            
+
             const [selectedCategory, setSelectedCategory] = useState('All');
             const [activeArticle, setActiveArticle] = useState(null);
-            const [activeClub, setActiveClub] = useState(null); 
+            const [activeClub, setActiveClub] = useState(null);
             const [searchQuery, setSearchQuery] = useState('');
 
             // ※ニュースデータは上の NEWS_DATA で定義しています
@@ -474,14 +549,14 @@
             // ログイン処理
             const handleLogin = (e) => {
                 e.preventDefault();
-                
+
                 // ★許可するパスワードのリスト
                 const allowedPasswords = ['niki-neki', 'tokiwa-iroha', 'kuga-muku'];
 
                 if (allowedPasswords.includes(loginInput)) {
                     setIsLoading(true); // ローディング開始
                     setLoginError('');
-                    
+
                     // 3秒後にログイン完了
                     setTimeout(() => {
                         setIsLoading(false);
@@ -495,8 +570,8 @@
 
             const filteredNews = newsData.filter(news => {
                 const matchCategory = selectedCategory === 'All' || news.category === selectedCategory;
-                const matchSearch = news.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                    news.summary.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchSearch = news.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    news.summary.toLowerCase().includes(searchQuery.toLowerCase());
                 return matchCategory && matchSearch;
             });
 
@@ -582,14 +657,14 @@
                     <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center relative z-50 overflow-hidden">
                         {/* 粒子エフェクト的な背景 (簡易版) */}
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-900 to-black"></div>
-                        
+
                         <div className="relative w-40 h-40 flex items-center justify-center">
                             {/* 中央のロゴ */}
                             <div className="absolute inset-0 flex items-center justify-center animate-pulse">
                                 {/* emblem.png がない場合のフォールバックも一応考慮してimgタグで配置 */}
-                                <img 
-                                    src="./emblem.png" 
-                                    alt="Sousei Emblem" 
+                                <img
+                                    src="./emblem.png"
+                                    alt="Sousei Emblem"
                                     className="w-24 h-24 object-contain opacity-90 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                                     onError={(e) => {
                                         e.target.style.display = 'none'; // 画像がない場合は非表示（アイコンなどで代用も可）
@@ -598,12 +673,12 @@
                                 {/* 画像がない場合用の代替アイコン（画像がロードされたら重なるが、実用上問題なし） */}
                                 <Icons.Star className="w-24 h-24 text-blue-500/20 absolute -z-10" />
                             </div>
-                            
+
                             {/* ローディングゲージ（正方形） */}
                             {/* SVGのstroke-dasharrayアニメーションで線を走らせる */}
                             <svg className="absolute top-0 left-0 w-full h-full rotate-[-90deg] drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]">
-                                <rect 
-                                    x="2" y="2" width="156" height="156" 
+                                <rect
+                                    x="2" y="2" width="156" height="156"
                                     rx="4" ry="4"
                                     className="stroke-blue-500 fill-none stroke-2"
                                     style={{
@@ -614,9 +689,9 @@
                                 />
                             </svg>
                         </div>
-                        
+
                         <p className="mt-8 text-blue-400 font-serif tracking-[0.3em] text-xs animate-pulse">CONNECTING TO ARCHIVE...</p>
-                        
+
                         <style>{`
                             @keyframes dash {
                                 to { stroke-dashoffset: 0; }
@@ -645,7 +720,7 @@
                                 <p className="text-blue-300 text-sm tracking-[0.2em] uppercase">Student Intranet System</p>
                             </div>
 
-                            <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-xl p-8 shadow-2xl animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+                            <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-xl p-8 shadow-2xl animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                                 <div className="flex items-center gap-2 mb-6 text-slate-300 border-b border-white/10 pb-4">
                                     <Icons.Lock className="w-4 h-4" />
                                     <span className="text-sm font-medium">学生認証</span>
@@ -683,12 +758,12 @@
 
                                 <div className="mt-6 text-center">
                                     <p className="text-[10px] text-slate-500">
-                                        ※パスコードを忘れた場合は、生徒手帳の裏面を確認するか、教務課まで申し出てください。<br/>
+                                        ※パスコードを忘れた場合は、生徒手帳の裏面を確認するか、教務課まで申し出てください。<br />
                                         ※不正アクセスは処罰の対象となります。
                                     </p>
                                 </div>
                             </div>
-                            
+
                             <div className="mt-8 text-center text-slate-600 text-xs">
                                 <p>&copy; Private Sousei Academy Information System.</p>
                             </div>
@@ -716,8 +791,8 @@
                                     <Icons.User className="w-3 h-3" />
                                     <span>Sousei Student</span>
                                 </div>
-                                <button 
-                                    onClick={() => {setIsLoggedIn(false); setLoginInput('');}}
+                                <button
+                                    onClick={() => { setIsLoggedIn(false); setLoginInput(''); }}
                                     className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-xs font-bold"
                                 >
                                     <Icons.LogOut className="w-4 h-4" />
@@ -748,12 +823,12 @@
                                     <p className="text-slate-400 text-sm mb-4">
                                         学生寮、部活動、教務課からの連絡事項を確認してください。
                                     </p>
-                                    
+
                                     {/* Search Box */}
                                     <div className="relative max-w-md w-full">
-                                        <input 
-                                            type="text" 
-                                            placeholder="キーワード検索（例：追試、インフルエンザ）" 
+                                        <input
+                                            type="text"
+                                            placeholder="キーワード検索（例：追試、インフルエンザ）"
                                             className="w-full pl-9 pr-4 py-2 rounded bg-slate-700/50 border border-slate-600 focus:border-blue-500 focus:bg-slate-700 text-white placeholder-slate-500 outline-none transition-all text-sm"
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -761,7 +836,7 @@
                                         <Icons.Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
                                     </div>
                                 </div>
-                                
+
                                 {/* Club Recruitment (Updated) */}
                                 <div className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded-lg p-4">
                                     <h3 className="text-sm font-bold text-blue-300 mb-3 flex items-center gap-2">
@@ -772,7 +847,7 @@
                                         {CLUBS_DATA.map(club => {
                                             const IconComponent = Icons[club.icon] || Icons.Star;
                                             return (
-                                                <button 
+                                                <button
                                                     key={club.id}
                                                     onClick={() => setActiveClub(club)}
                                                     className="bg-slate-900/50 p-2 rounded border border-slate-700 hover:border-blue-500 transition-colors text-left w-full group"
@@ -800,11 +875,10 @@
                                 <button
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat)}
-                                    className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap transition-all ${
-                                        selectedCategory === cat 
-                                            ? 'bg-slate-800 text-white' 
-                                            : 'text-slate-500 hover:bg-slate-100'
-                                    }`}
+                                    className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap transition-all ${selectedCategory === cat
+                                        ? 'bg-slate-800 text-white'
+                                        : 'text-slate-500 hover:bg-slate-100'
+                                        }`}
                                 >
                                     {cat}
                                 </button>
@@ -815,8 +889,8 @@
                         <div className="grid gap-3">
                             {filteredNews.length > 0 ? (
                                 filteredNews.map((news) => (
-                                    <article 
-                                        key={news.id} 
+                                    <article
+                                        key={news.id}
                                         className={`bg-white rounded border hover:border-blue-300 transition-all cursor-pointer group relative overflow-hidden shadow-sm hover:shadow-md ${news.important ? 'border-l-4 border-l-red-500' : 'border-l-4 border-l-slate-200'}`}
                                         onClick={() => setActiveArticle(news)}
                                     >
@@ -849,7 +923,7 @@
                             ) : (
                                 <div className="text-center py-16 bg-slate-50 rounded border border-dashed border-slate-300">
                                     <p className="text-slate-500 text-sm">該当する連絡事項はありません。</p>
-                                    <button onClick={() => {setSelectedCategory('All'); setSearchQuery('');}} className="mt-2 text-blue-600 hover:underline text-xs">
+                                    <button onClick={() => { setSelectedCategory('All'); setSearchQuery(''); }} className="mt-2 text-blue-600 hover:underline text-xs">
                                         全ての表示に戻す
                                     </button>
                                 </div>
@@ -868,7 +942,7 @@
 
                     {/* Article Detail Modal */}
                     {activeArticle && <ArticleModal article={activeArticle} onClose={() => setActiveArticle(null)} />}
-                    
+
                     {/* Club Detail Modal */}
                     {activeClub && <ClubModal club={activeClub} onClose={() => setActiveClub(null)} />}
                 </div>
@@ -879,4 +953,5 @@
         root.render(<SouseiStudentPortal />);
     </script>
 </body>
+
 </html>
